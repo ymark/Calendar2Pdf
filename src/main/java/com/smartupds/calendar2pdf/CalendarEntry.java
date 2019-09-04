@@ -18,12 +18,12 @@ public class CalendarEntry {
     private Date endTime;
 
     public void setStartTime(String startDate) throws ParseException {
-        DateFormat format=new SimpleDateFormat("yyyyMMddHHmmss");
+        DateFormat format=new SimpleDateFormat(Resources.TIMESTAMP_PATTERN);
         this.startTime=format.parse(startDate);
     }
 
     public void setEndTime(String endDate) throws ParseException {
-        DateFormat format=new SimpleDateFormat("yyyyMMddHHmmss");
+        DateFormat format=new SimpleDateFormat(Resources.TIMESTAMP_PATTERN);
         this.endTime=format.parse(endDate);
     }
 }

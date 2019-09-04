@@ -18,15 +18,15 @@ public class Importer {
     private String calendarContents;
     
     public Importer(File calendarFile) throws IOException{
-        this.calendarContents=FileUtils.readFileToString(calendarFile, "UTF-8");
+        this.calendarContents=FileUtils.readFileToString(calendarFile, Resources.UTF_8_ENCODING);
     }
     
     protected Collection<String> tokenizeCalendarEntries(){
         Set<String> retCollection=new HashSet<>();
-        this.calendarContents=this.calendarContents.substring(this.calendarContents.indexOf("BEGIN:VEVENT"));
+        this.calendarContents=this.calendarContents.substring(this.calendarContents.indexOf(Resources.ICAL_KEY_BEGIN_VEVENT));
         while(true){
-            if(this.calendarContents.startsWith("BEGIN:VEVENT")){
-                int endIndex=this.calendarContents.indexOf("END:VEVENT")+"END:VEVENT".length()+2;
+            if(this.calendarContents.startsWith(Resources.ICAL_KEY_BEGIN_VEVENT)){
+                int endIndex=this.calendarContents.indexOf(Resources.ICAL_KEY_END_VEVENT)+Resources.ICAL_KEY_END_VEVENT.length()+2;
                 retCollection.add(this.calendarContents.substring(0,endIndex));
                 this.calendarContents=this.calendarContents.substring(endIndex);
             }else{
@@ -38,35 +38,35 @@ public class Importer {
 
     protected CalendarEntry createCalendarEntry(String calendarEntryString) throws ParseException {
         CalendarEntry newEntry=new CalendarEntry();
-        String tempString=calendarEntryString.substring(calendarEntryString.indexOf("SUMMARY:"));
-        newEntry.setTitle(tempString.substring(0,tempString.indexOf("\n")-1).replace("SUMMARY:",""));
-        tempString=calendarEntryString.substring(calendarEntryString.indexOf("DTSTART:"));
-        newEntry.setStartTime(tempString.substring(0,tempString.indexOf("\n")-1).replace("DTSTART:","").replace("T","").replace("Z",""));
-        tempString=calendarEntryString.substring(calendarEntryString.indexOf("DTEND:"));
-        newEntry.setEndTime(tempString.substring(0,tempString.indexOf("\n")-1).replace("DTEND:","").replace("T","").replace("Z",""));
+        String tempString=calendarEntryString.substring(calendarEntryString.indexOf(Resources.ICAL_KEY_SUMMARY));
+        newEntry.setTitle(tempString.substring(0,tempString.indexOf("\n")-1).replace(Resources.ICAL_KEY_SUMMARY,""));
+        tempString=calendarEntryString.substring(calendarEntryString.indexOf(Resources.ICAL_KEY_DTSTART));
+        newEntry.setStartTime(tempString.substring(0,tempString.indexOf("\n")-1).replace(Resources.ICAL_KEY_DTSTART,"").replace("T",""));
+        tempString=calendarEntryString.substring(calendarEntryString.indexOf(Resources.ICAL_KEY_DTEND));
+        newEntry.setEndTime(tempString.substring(0,tempString.indexOf("\n")-1).replace(Resources.ICAL_KEY_DTEND,"").replace("T",""));
         String descriptionText="";
         boolean foundDescriptionText=false;
         for(String line : calendarEntryString.split("\n")){
             line=line.trim();
-            if(line.equals("DESCRIPTION:")){
+            if(line.equals(Resources.ICAL_KEY_DESCRIPTION)){
                 break;
-            }else if(line.startsWith("DESCRIPTION:")){
-                descriptionText=line.substring("DESCRIPTION:".length(),line.length());
+            }else if(line.startsWith(Resources.ICAL_KEY_DESCRIPTION)){
+                descriptionText=line.substring(Resources.ICAL_KEY_DESCRIPTION.length(),line.length());
                 foundDescriptionText=true;
             }else if(foundDescriptionText){
-                if(line.startsWith("BEGIN:VEVENT") ||
-                        line.startsWith("DTSTART:") ||
-                        line.startsWith("DTEND:") ||
-                        line.startsWith("DTSTAMP:") ||
-                        line.startsWith("UID:") ||
-                        line.startsWith("CREATED:") ||
-                        line.startsWith("LAST-MODIFIED:") ||
-                        line.startsWith("LOCATION:") ||
-                        line.startsWith("SEQUENCE:") ||
-                        line.startsWith("STATUS:") ||
-                        line.startsWith("SUMMARY:") ||
-                        line.startsWith("TRANSP:") ||
-                        line.startsWith("END:VEVENT")){
+                if(line.startsWith(Resources.ICAL_KEY_BEGIN_VEVENT) ||
+                        line.startsWith(Resources.ICAL_KEY_DTSTART) ||
+                        line.startsWith(Resources.ICAL_KEY_DTEND) ||
+                        line.startsWith(Resources.ICAL_KEY_DTSTAMP) ||
+                        line.startsWith(Resources.ICAL_KEY_UID) ||
+                        line.startsWith(Resources.ICAL_KEY_CREATED) ||
+                        line.startsWith(Resources.ICAL_KEY_LAST_MODIFIED) ||
+                        line.startsWith(Resources.ICAL_KEY_LOCATION) ||
+                        line.startsWith(Resources.ICAL_KEY_SEQUENCE) ||
+                        line.startsWith(Resources.ICAL_KEY_STATUS) ||
+                        line.startsWith(Resources.ICAL_KEY_SUMMARY) ||
+                        line.startsWith(Resources.ICAL_KEY_TRANSP) ||
+                        line.startsWith(Resources.ICAL_KEY_END_VEVENT)){
                     break;
                 }else{
                     descriptionText+=" "+line.substring(0,line.length());
