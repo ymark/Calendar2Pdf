@@ -1,5 +1,7 @@
 package com.smartupds.calendar2pdf;
 
+import com.itextpdf.text.DocumentException;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -11,7 +13,7 @@ import java.util.*;
 */
 public class Controller {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, DocumentException {
         Importer importer=new Importer(new File("C:/users/marketak/Downloads/calendar.ics"));
         Collection<String> results=importer.tokenizeCalendarEntries();
         System.out.println("Entries as String size: "+results.size());
@@ -25,7 +27,13 @@ public class Controller {
 
         System.out.println("Sorting Calendar Entries");
         Map<Integer,Set<CalendarEntry>> sortedCalendars=Controller.sortCalendarEntries(calendarEntries);
+        System.out.println("Created "+sortedCalendars.keySet().size()+" Calendars for the years "+sortedCalendars.keySet());
 
+        System.out.println("Create PDFs ");
+        for(Integer year : sortedCalendars.keySet()){
+            System.out.println("Exporting PDF Calendar for year "+year);
+            new Exporter().createPdfWithCalendarEntries(year,sortedCalendars.get(year));
+        }
     }
 
     private static Map<Integer,Set<CalendarEntry>> sortCalendarEntries(Collection<CalendarEntry> calendarEntries){
