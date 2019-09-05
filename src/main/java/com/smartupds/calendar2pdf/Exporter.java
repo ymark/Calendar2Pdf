@@ -49,7 +49,6 @@ public class Exporter {
                 table.addCell(this.getTableBodyCell(calendarEntry.getTimeDuration()));
                 table.addCell(this.getTableBodyCell(calendarEntry.getTitle()));
                 table.addCell(this.getTableBodyCell(calendarEntry.getDescription()));
-//                paragraph.add(table);
                 paragraphs.put(calendarEntry.getDateNumeric(),paragraph);
             }else{
                 Paragraph paragraph=new Paragraph();
